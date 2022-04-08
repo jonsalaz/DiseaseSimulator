@@ -1,8 +1,9 @@
-200 200
-20
-5
-10
-95
-100
-grid 10 10
-1
+dim 200 200
+dist 2
+incLen 5
+sickTime 10
+recovRate 95
+numAgents 32
+initLoc grid 10 10
+initSick 1
+initImm 5
