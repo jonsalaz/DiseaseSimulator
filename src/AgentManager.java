@@ -24,7 +24,7 @@ public class AgentManager {
     public AgentManager(String configFile) {
         readConfig(configFile);
         buildSim();
-        //printSim();
+        printSim();
     }
 
     private void readConfig(String configFile) {
@@ -86,7 +86,6 @@ public class AgentManager {
         } catch (Exception e){
             e.printStackTrace();
         }
-
     }
 
     private void buildSim() {
@@ -150,7 +149,7 @@ public class AgentManager {
         }
 
         // Populate neighbors list for e/a agent
-        //findAgentNeighbors();
+        findAgentNeighbors();
     }
 
     private void simLoop() {}
@@ -170,6 +169,28 @@ public class AgentManager {
     }
 
     private void findAgentNeighbors() {
+        if (numAgents <= 0) return;
+        agentNeighbors = new HashMap<>();
+
+        for (int i = 0; i < agents.size(); i++) {
+            List<Agent> neighbors = new ArrayList<>();
+            Agent agent = agents.get(i);
+
+            for (int j = 0; j < agents.size(); j++) {
+                // So agent isn't neighbor if itself
+                if (i == j ) continue;
+
+                Agent posNeighbor = agents.get(j);
+                double distanceBetween =
+                        getDistance(agent.getCoord(), posNeighbor.getCoord());
+
+                if (distanceBetween <= distance) {
+                    neighbors.add(posNeighbor);
+                }
+            }
+
+            agentNeighbors.put(agent, neighbors);
+        }
     }
 
     private double getDistance(Integer[] coord1, Integer[] coord2) {
@@ -177,9 +198,14 @@ public class AgentManager {
                 + Math.pow((coord2[1] - coord1[1]), 2));
     }
 
-    private List<Status> findNeighborStatus(Agent agent){
+    private List<Status> findNeighborsStatus(Agent agent){
+        List<Status> neighborsStatus = new ArrayList<>();
+        List<Agent> neighbors = agentNeighbors.get(agent);
 
-        return null;
+        for (Agent a : neighbors) {
+            neighborsStatus.add(a.getStatus());
+        }
+        return neighborsStatus;
     }
 
     private void printSim() {
