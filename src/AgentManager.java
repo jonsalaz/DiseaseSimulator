@@ -13,14 +13,15 @@ import java.util.Random;
 public class AgentManager {
 
     /** Initialized with default values, overridden by specified config */
-    private Position[][] diseaseArr;
+    private ArrayList<Agent> agents;
     private int distance = 20;
     private int incubationLen = 5;
     private int sickTime = 10;
     private int recovRate = 95;
     private int numAgents = 100;
-    private String agentLoc = "grid";
-    private int gridR = 200, gridC = 200;
+    private String agentLoc = "random";
+    private int width = 200, height = 200;
+    private int gridR, gridC;
     private int initSick = 1;
     private int initImm = 5;
 
@@ -42,38 +43,45 @@ public class AgentManager {
                 String[] lineArr = line.split(" ");
                 String label = lineArr[0];
                 switch(label) {
-                    case("dim"):
-                        int r = Integer.parseInt(lineArr[1]),
-                                c = Integer.parseInt(lineArr[2]);
-                        diseaseArr = new Position[r][c];
+                    case("dimensions"):
+                        width = Integer.parseInt(lineArr[1]);
+                        height = Integer.parseInt(lineArr[2]);
                         break;
-                    case("dist"):
+                    case("exposuredistance"):
                         distance = Integer.parseInt(lineArr[1]);
                         break;
-                    case("incLen"):
+                    case("incubation"):
                         incubationLen = Integer.parseInt(lineArr[1]);
                         break;
-                    case("sickTime"):
+                    case("sickness"):
                         sickTime = Integer.parseInt(lineArr[1]);
                         break;
-                    case("recovRate"):
+                    case("recover"):
                         recovRate = Integer.parseInt(lineArr[1]);
                         break;
-                    case("numAgents"):
+                    case("grid"):
+                        agentLoc = lineArr[0];
+                        gridR = Integer.parseInt(lineArr[1]);
+                        gridC = Integer.parseInt(lineArr[2]);
+                        numAgents = gridR * gridC;
+                        break;
+                    case("random"):
+                        agentLoc = lineArr[0];
                         numAgents = Integer.parseInt(lineArr[1]);
                         break;
-                    case("initLoc"):
-                        agentLoc = lineArr[1];
-                        gridR = Integer.parseInt(lineArr[2]);
-                        gridC = Integer.parseInt(lineArr[3]);
+                    case("randomGrid"):
+                        agentLoc = lineArr[0];
+                        gridR = Integer.parseInt(lineArr[1]);
+                        gridC = Integer.parseInt(lineArr[2]);
+                        numAgents = Integer.parseInt(lineArr[3]);
                         break;
-                    case("initSick"):
+                    case("initialsick"):
                         initSick = Integer.parseInt(lineArr[1]);
                         break;
-                    case("initImm"):
+                    case("immune"):
                         initImm = Integer.parseInt(lineArr[1]);
                         break;
-                    default: continue;
+                    default: break;
                 }
 
                 line = br.readLine();
@@ -86,18 +94,51 @@ public class AgentManager {
     }
 
     private void buildSim() {
+        agents = new ArrayList<>();
 
-        diseaseArr = new Position[gridR][gridC];
-        List<Position> agentPositions = new ArrayList<>();
+        //Initialize agents with locations based on simulation type.
+        switch(agentLoc) {
+            case("grid"):
+                for (int r = 0; r <= gridR*distance; r+=distance) {
+                    for (int c = 0; c <= gridC*distance; c+=distance) {
+                        Agent agent = new Agent(r, c);
+                        agents.add(agent);
+                    }
+                }
+                break;
+            case("randomGrid"):
+                //TODO: Randomize arrangement of agents, accounting for if an agent has already been placed in the
+                // randomly selected location.
+                Random r = new Random();
+                for (int i = 0; i < numAgents; i++) {
+                    int x = r.nextInt(gridR)*distance;
+                    int y = r.nextInt(gridR)*distance;
+                    Agent agent = new Agent(x, y);
+                    agents.add(agent);
+                }
+                break;
+            case("random"):
+                //TODO: account for the rare chance where two agents are placed in the same location.
+                r = new Random();
+                for (int i = 0; i < numAgents; i++) {
+                    int x = r.nextInt(width);
+                    int y = r.nextInt(height);
+                    Agent agent = new Agent(x, y);
+                    agents.add(agent);
+                }
+                break;
+            default: break;
+        }
+
+        // Shuffle ArrayList of agents to ensure that the location of states is randomized.
+        Collections.shuffle(agents);
+
         int sick = 0;
         int immune = 0;
 
-        // create initial agents
-        for (int i = 0; i < numAgents; i++) {
-
-            Agent agent = new Agent();
-            Position agentPos = new Position();
-
+        // Assign agent status.
+        for (int i = 0; i < agents.size(); i++) {
+            Agent agent = agents.get(i);
             if (sick < initSick) {
                 agent.setStatus(Status.SICK);
                 sick++;
@@ -109,50 +150,7 @@ public class AgentManager {
             else {
                 agent.setStatus(Status.VULNERABLE);
             }
-
-            agentPos.setAgent(agent);
-            agentPositions.add(agentPos);
         }
-
-        // Shuffle so initial sick/imm are placed randomly in sim
-        Collections.shuffle(agentPositions);
-
-        // fill diseaseArr, if agent location is grid add agent positions
-        int currDist = 0;
-        for (int r = 0; r < gridR; r++) {
-            for (int c = 0; c < gridC; c++) {
-
-                // place distanced agent if location type is grid &
-                // agent positions not empty
-                if (agentLoc.equals("grid") && agentPositions.size() > 0 &&
-                        (currDist == distance || (r == 0 && c == 0))) {
-                    diseaseArr[r][c] = agentPositions.remove(0);
-                    currDist = 0;
-                }
-
-                // if random/randomGrid or out of agent positions
-                else {
-                    diseaseArr[r][c] = new Position();
-                    currDist++;
-                }
-            }
-        }
-
-        // if random/randomGrid agent location, place agent pos randomly
-        if (!agentLoc.equals("grid")) {
-            Random r = new Random();
-            while (!agentPositions.isEmpty()) {
-                int ranR = r.nextInt(gridR);
-                int ranC = r.nextInt(gridC);
-                Position pos = diseaseArr[r.nextInt(gridR)][r.nextInt(gridC)];
-
-                if (pos.getAgent() == null) {
-                    diseaseArr[ranR][ranC] = agentPositions.remove(0);
-                }
-
-            }
-        }
-
     }
 
     private void simLoop() {}
@@ -162,11 +160,8 @@ public class AgentManager {
     }
 
     private void printSim() {
-        for (int r = 0; r < gridR; r++) {
-            for (int c = 0; c < gridC; c++) {
-                System.out.print(diseaseArr[r][c]);
-            }
-            System.out.println();
+        for (int i = 0; i < agents.size(); i++) {
+            System.out.println(agents.get(i));
         }
     }
 

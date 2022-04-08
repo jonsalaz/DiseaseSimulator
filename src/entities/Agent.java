@@ -7,10 +7,13 @@ import java.util.concurrent.BlockingQueue;
 public class Agent implements Runnable {
 
     private Status status;
+    private int x, y;
 
     private BlockingQueue<Status> neighborStatuses;
 
-    public Agent() {
+    public Agent(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
     @Override
@@ -33,7 +36,8 @@ public class Agent implements Runnable {
     @Override
     public String toString() {
         return "Agent{" +
-                "status=" + status +
+                "status=" + status + ", " +
+                "coordinates=" + "(" + this.x + ", " + this.y + ")" +
                 '}';
     }
 }
