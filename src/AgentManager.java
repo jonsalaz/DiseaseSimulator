@@ -19,7 +19,7 @@ public class AgentManager {
     private int sickTime = 10;
     private int recovRate = 95;
     private int numAgents = 100;
-    private String agentLoc = "grid";
+    private String agentLoc = "random";
     private int width = 200, height = 200;
     private int gridR, gridC;
     private int initSick = 1;
@@ -109,10 +109,17 @@ public class AgentManager {
             case("randomGrid"):
                 //TODO: Randomize arrangement of agents, accounting for if an agent has already been placed in the
                 // randomly selected location.
+                Random r = new Random();
+                for (int i = 0; i < numAgents; i++) {
+                    int x = r.nextInt(gridR)*distance;
+                    int y = r.nextInt(gridR)*distance;
+                    Agent agent = new Agent(x, y);
+                    agents.add(agent);
+                }
                 break;
             case("random"):
                 //TODO: account for the rare chance where two agents are placed in the same location.
-                Random r = new Random();
+                r = new Random();
                 for (int i = 0; i < numAgents; i++) {
                     int x = r.nextInt(width);
                     int y = r.nextInt(height);
@@ -120,6 +127,7 @@ public class AgentManager {
                     agents.add(agent);
                 }
                 break;
+            default: break;
         }
 
         // Shuffle ArrayList of agents to ensure that the location of states is randomized.
