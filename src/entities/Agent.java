@@ -7,10 +7,13 @@ import java.util.concurrent.BlockingQueue;
 public class Agent implements Runnable {
 
     private Status status;
+    private int x, y;
 
     private BlockingQueue<Status> neighborStatuses;
 
-    public Agent() {
+    public Agent(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
     @Override
