@@ -79,7 +79,7 @@ public class AgentManager {
                     case("immune"):
                         initImm = Integer.parseInt(lineArr[1]);
                         break;
-                    default: continue;
+                    default: break;
                 }
 
                 line = br.readLine();

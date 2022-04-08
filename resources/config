@@ -3,7 +3,6 @@ exposuredistance 2
 incubation 5
 sickness 10
 recover 95
-numAgents 32
 grid 10 10
 initialsick 5
 immune 5
