@@ -36,7 +36,8 @@ public class Agent implements Runnable {
     @Override
     public String toString() {
         return "Agent{" +
-                "status=" + status +
+                "status=" + status + ", " +
+                "Coordinates=" + "(" + this.x + ", " + this.y + ")" +
                 '}';
     }
 }
