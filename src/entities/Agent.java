@@ -37,7 +37,7 @@ public class Agent implements Runnable {
     public String toString() {
         return "Agent{" +
                 "status=" + status + ", " +
-                "Coordinates=" + "(" + this.x + ", " + this.y + ")" +
+                "coordinates=" + "(" + this.x + ", " + this.y + ")" +
                 '}';
     }
 }
