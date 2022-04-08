@@ -1,14 +1,9 @@
 import entities.Agent;
-import entities.Position;
 import entities.Status;
-
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class AgentManager {
 
@@ -107,25 +102,27 @@ public class AgentManager {
                 }
                 break;
             case("randomGrid"):
-                //TODO: Randomize arrangement of agents, accounting for if an agent has already been placed in the
-                // randomly selected location.
                 Random r = new Random();
-                for (int i = 0; i < numAgents; i++) {
+                Set<List<Integer>> placedAgentCoords = new HashSet<>();
+                int numPlaced = 0;
+
+                while (numPlaced < numAgents) {
                     int x = r.nextInt(gridR)*distance;
                     int y = r.nextInt(gridR)*distance;
-                    Agent agent = new Agent(x, y);
-                    agents.add(agent);
+                    numPlaced = getNumPlaced(placedAgentCoords, numPlaced, x, y);
                 }
                 break;
             case("random"):
-                //TODO: account for the rare chance where two agents are placed in the same location.
                 r = new Random();
-                for (int i = 0; i < numAgents; i++) {
+                placedAgentCoords = new HashSet<>();
+                numPlaced = 0;
+
+                while (numPlaced < numAgents) {
                     int x = r.nextInt(width);
                     int y = r.nextInt(height);
-                    Agent agent = new Agent(x, y);
-                    agents.add(agent);
+                    numPlaced = getNumPlaced(placedAgentCoords, numPlaced, x, y);
                 }
+
                 break;
             default: break;
         }
@@ -137,17 +134,14 @@ public class AgentManager {
         int immune = 0;
 
         // Assign agent status.
-        for (int i = 0; i < agents.size(); i++) {
-            Agent agent = agents.get(i);
+        for (Agent agent : agents) {
             if (sick < initSick) {
                 agent.setStatus(Status.SICK);
                 sick++;
-            }
-            else if (immune < initImm) {
+            } else if (immune < initImm) {
                 agent.setStatus(Status.IMMUNE);
                 immune++;
-            }
-            else {
+            } else {
                 agent.setStatus(Status.VULNERABLE);
             }
         }
@@ -155,13 +149,36 @@ public class AgentManager {
 
     private void simLoop() {}
 
+    /** Utility function for placement of random/randomGrid agents -
+     * Try to place agent randomly by checking generated coordinate against
+     * already placed agent locations. If successful, return updated num agents placed*/
+    private int getNumPlaced(Set<List<Integer>> placedAgentCoords, int numPlaced, int x, int y) {
+        List<Integer> agentCoord = new LinkedList<>(Arrays.asList(x, y));
+        if (placedAgentCoords.contains(agentCoord)) return numPlaced;
+
+        Agent agent = new Agent(x, y);
+        agents.add(agent);
+        placedAgentCoords.add(agentCoord);
+        numPlaced++;
+        return numPlaced;
+    }
+
+    private void findAgentNeighbors() {
+    }
+
+    private double getDistance(Integer[] coord1, Integer[] coord2) {
+        return Math.sqrt(Math.pow((coord2[0] - coord1[0]), 2)
+                + Math.pow((coord2[1] - coord1[1]), 2));
+    }
+
     private List<Status> findNeighborStatus(Agent agent){
+
         return null;
     }
 
     private void printSim() {
-        for (int i = 0; i < agents.size(); i++) {
-            System.out.println(agents.get(i));
+        for (Agent agent : agents) {
+            System.out.println(agent);
         }
     }
 
