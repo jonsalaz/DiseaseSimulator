@@ -9,6 +9,7 @@ public class AgentManager {
 
     /** Initialized with default values, overridden by specified config */
     private ArrayList<Agent> agents;
+    private HashMap<Agent, List<Agent>> agentNeighbors;
     private int distance = 20;
     private int incubationLen = 5;
     private int sickTime = 10;
@@ -23,7 +24,7 @@ public class AgentManager {
     public AgentManager(String configFile) {
         readConfig(configFile);
         buildSim();
-        printSim();
+        //printSim();
     }
 
     private void readConfig(String configFile) {
@@ -94,8 +95,11 @@ public class AgentManager {
         //Initialize agents with locations based on simulation type.
         switch(agentLoc) {
             case("grid"):
-                for (int r = 0; r <= gridR*distance; r+=distance) {
-                    for (int c = 0; c <= gridC*distance; c+=distance) {
+
+                for (int r = 0; r < gridR*distance; r+=distance) {
+                    if (r >= gridR) break;
+                    for (int c = 0; c < gridC*distance; c+=distance) {
+                        if (c >= gridC) break;
                         Agent agent = new Agent(r, c);
                         agents.add(agent);
                     }
@@ -122,7 +126,6 @@ public class AgentManager {
                     int y = r.nextInt(height);
                     numPlaced = getNumPlaced(placedAgentCoords, numPlaced, x, y);
                 }
-
                 break;
             default: break;
         }
@@ -145,6 +148,9 @@ public class AgentManager {
                 agent.setStatus(Status.VULNERABLE);
             }
         }
+
+        // Populate neighbors list for e/a agent
+        //findAgentNeighbors();
     }
 
     private void simLoop() {}
@@ -177,8 +183,10 @@ public class AgentManager {
     }
 
     private void printSim() {
-        for (Agent agent : agents) {
-            System.out.println(agent);
+
+        for (Map.Entry<Agent, List<Agent>> entry : agentNeighbors.entrySet()) {
+            System.out.println(entry.getKey().toString() +
+                    " Num neighbors: " + entry.getValue().size());
         }
     }
 

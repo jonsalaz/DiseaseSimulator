@@ -1,8 +1,8 @@
 dimensions 200 200
-exposuredistance 2
+exposuredistance 3
 incubation 5
 sickness 10
 recover 95
-random 5
+grid 200 200
 initialsick 5
 immune 5

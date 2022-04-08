@@ -8,12 +8,14 @@ public class Agent implements Runnable {
 
     private Status status;
     private int x, y;
+    private Integer[] coord;
 
     private BlockingQueue<Status> neighborStatuses;
 
     public Agent(int x, int y) {
         this.x = x;
         this.y = y;
+        coord = new Integer[]{x, y};
     }
 
     @Override
@@ -31,6 +33,10 @@ public class Agent implements Runnable {
 
     public void setNeighborStatuses(BlockingQueue<Status> neighborStatuses) {
         this.neighborStatuses = neighborStatuses;
+    }
+
+    public Integer[] getCoord() {
+        return coord;
     }
 
     @Override
