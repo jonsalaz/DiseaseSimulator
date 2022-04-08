@@ -42,35 +42,41 @@ public class AgentManager {
                 String[] lineArr = line.split(" ");
                 String label = lineArr[0];
                 switch(label) {
-                    case("dim"):
+                    case("dimensions"):
                         int r = Integer.parseInt(lineArr[1]),
                                 c = Integer.parseInt(lineArr[2]);
                         diseaseArr = new Position[r][c];
                         break;
-                    case("dist"):
+                    case("exposuredistance"):
                         distance = Integer.parseInt(lineArr[1]);
                         break;
-                    case("incLen"):
+                    case("incubation"):
                         incubationLen = Integer.parseInt(lineArr[1]);
                         break;
-                    case("sickTime"):
+                    case("sickness"):
                         sickTime = Integer.parseInt(lineArr[1]);
                         break;
-                    case("recovRate"):
+                    case("recover"):
                         recovRate = Integer.parseInt(lineArr[1]);
                         break;
-                    case("numAgents"):
+                    case("grid"):
+                        agentLoc = lineArr[0];
+                        gridR = Integer.parseInt(lineArr[1]);
+                        gridC = Integer.parseInt(lineArr[2]);
+                        numAgents = gridR * gridC;
+                        break;
+                    case("random"):
                         numAgents = Integer.parseInt(lineArr[1]);
                         break;
-                    case("initLoc"):
-                        agentLoc = lineArr[1];
-                        gridR = Integer.parseInt(lineArr[2]);
-                        gridC = Integer.parseInt(lineArr[3]);
+                    case("randomGrid"):
+                        gridR = Integer.parseInt(lineArr[1]);
+                        gridC = Integer.parseInt(lineArr[2]);
+                        numAgents = Integer.parseInt(lineArr[3]);
                         break;
-                    case("initSick"):
+                    case("initialsick"):
                         initSick = Integer.parseInt(lineArr[1]);
                         break;
-                    case("initImm"):
+                    case("immune"):
                         initImm = Integer.parseInt(lineArr[1]);
                         break;
                     default: continue;

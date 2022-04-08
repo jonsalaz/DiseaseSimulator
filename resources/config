@@ -1,9 +1,9 @@
-dim 200 200
-dist 2
-incLen 5
-sickTime 10
-recovRate 95
+dimensions 200 200
+exposuredistance 2
+incubation 5
+sickness 10
+recover 95
 numAgents 32
-initLoc grid 10 10
-initSick 1
-initImm 5
+grid 10 10
+initialsick 5
+immune 5
