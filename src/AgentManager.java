@@ -66,9 +66,11 @@ public class AgentManager {
                         numAgents = gridR * gridC;
                         break;
                     case("random"):
+                        agentLoc = lineArr[0];
                         numAgents = Integer.parseInt(lineArr[1]);
                         break;
                     case("randomGrid"):
+                        agentLoc = lineArr[0];
                         gridR = Integer.parseInt(lineArr[1]);
                         gridC = Integer.parseInt(lineArr[2]);
                         numAgents = Integer.parseInt(lineArr[3]);
