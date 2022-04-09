@@ -92,30 +92,31 @@ public class AgentManager {
         agents = new ArrayList<>();
 
         //Initialize agents with locations based on simulation type.
-        switch(agentLoc) {
-            case("grid"):
-
-                for (int r = 0; r < gridR*distance; r+=distance) {
+        switch (agentLoc) {
+            case ("grid"):
+                for (int r = 0; r < gridR * distance; r += distance) {
                     if (r >= gridR) break;
-                    for (int c = 0; c < gridC*distance; c+=distance) {
+                    for (int c = 0; c < gridC * distance; c += distance) {
                         if (c >= gridC) break;
                         Agent agent = new Agent(r, c);
                         agents.add(agent);
                     }
                 }
+
+                numAgents = agents.size();
                 break;
-            case("randomGrid"):
+            case ("randomGrid"):
                 Random r = new Random();
                 Set<List<Integer>> placedAgentCoords = new HashSet<>();
                 int numPlaced = 0;
 
                 while (numPlaced < numAgents) {
-                    int x = r.nextInt(gridR)*distance;
-                    int y = r.nextInt(gridR)*distance;
+                    int x = r.nextInt(gridR) * distance;
+                    int y = r.nextInt(gridR) * distance;
                     numPlaced = getNumPlaced(placedAgentCoords, numPlaced, x, y);
                 }
                 break;
-            case("random"):
+            case ("random"):
                 r = new Random();
                 placedAgentCoords = new HashSet<>();
                 numPlaced = 0;
@@ -126,7 +127,8 @@ public class AgentManager {
                     numPlaced = getNumPlaced(placedAgentCoords, numPlaced, x, y);
                 }
                 break;
-            default: break;
+            default:
+                break;
         }
 
         // Shuffle ArrayList of agents to ensure that the location of states is randomized.
@@ -152,6 +154,21 @@ public class AgentManager {
         findAgentNeighbors();
     }
 
+    private void findAgentNeighbors() {
+        if (numAgents <= 0) return;
+        agentNeighbors = new HashMap<>();
+
+        for (Agent agent : agents) {
+            List<Agent> neighbors = new ArrayList<>();
+            for (Agent posNeighbor : agents) {
+                if (agent.equals(posNeighbor)) continue;
+                if (agent.distanceTo(posNeighbor) > distance) continue;
+                neighbors.add(posNeighbor);
+            }
+            agentNeighbors.put(agent, neighbors);
+        }
+    }
+
     private void simLoop() {}
 
     /** Utility function for placement of random/randomGrid agents -
@@ -168,36 +185,6 @@ public class AgentManager {
         return numPlaced;
     }
 
-    private void findAgentNeighbors() {
-        if (numAgents <= 0) return;
-        agentNeighbors = new HashMap<>();
-
-        for (int i = 0; i < agents.size(); i++) {
-            List<Agent> neighbors = new ArrayList<>();
-            Agent agent = agents.get(i);
-
-            for (int j = 0; j < agents.size(); j++) {
-                // So agent isn't neighbor if itself
-                if (i == j ) continue;
-
-                Agent posNeighbor = agents.get(j);
-                double distanceBetween =
-                        getDistance(agent.getCoord(), posNeighbor.getCoord());
-
-                if (distanceBetween <= distance) {
-                    neighbors.add(posNeighbor);
-                }
-            }
-
-            agentNeighbors.put(agent, neighbors);
-        }
-    }
-
-    private double getDistance(Integer[] coord1, Integer[] coord2) {
-        return Math.sqrt(Math.pow((coord2[0] - coord1[0]), 2)
-                + Math.pow((coord2[1] - coord1[1]), 2));
-    }
-
     private List<Status> findNeighborsStatus(Agent agent){
         List<Status> neighborsStatus = new ArrayList<>();
         List<Agent> neighbors = agentNeighbors.get(agent);
@@ -210,6 +197,7 @@ public class AgentManager {
 
     private void printSim() {
 
+        System.out.println(agentNeighbors.size() + " agents");
         for (Map.Entry<Agent, List<Agent>> entry : agentNeighbors.entrySet()) {
             System.out.println(entry.getKey().toString() +
                     " Num neighbors: " + entry.getValue().size());

@@ -1,6 +1,7 @@
 package entities;
 
 
+import java.util.Comparator;
 import java.util.concurrent.BlockingQueue;
 
 // Each agent should be responsible for finding its neighbors
@@ -39,6 +40,11 @@ public class Agent implements Runnable {
         return coord;
     }
 
+    public double distanceTo(Agent a) {
+        return Math.sqrt(Math.pow((this.x - a.x), 2)
+                + Math.pow((this.y - a.y), 2));
+    }
+
     @Override
     public String toString() {
         return "Agent{" +
@@ -46,4 +52,5 @@ public class Agent implements Runnable {
                 "coordinates=" + "(" + this.x + ", " + this.y + ")" +
                 '}';
     }
+
 }
