@@ -28,6 +28,7 @@ public class AgentManager {
         readConfig(configFile);
         buildSim();
         simLoop();
+        System.exit(1);
         //printSim();
     }
 
@@ -102,7 +103,7 @@ public class AgentManager {
                     if (r >= gridR) break;
                     for (int c = 0; c < gridC * distance; c += distance) {
                         if (c >= gridC) break;
-                        Agent agent = new Agent(r, c, incubationLen);
+                        Agent agent = new Agent(r, c, incubationLen, sickTime, recovRate);
                         agents.add(agent);
                     }
                 }
@@ -188,6 +189,8 @@ public class AgentManager {
                 executorService.submit(a);
             }
             deadOrImmune = counter;
+
+            System.out.println(deadOrImmune);
             executorService.shutdown();
             try {
                 executorService.awaitTermination(5, TimeUnit.SECONDS);
@@ -204,7 +207,7 @@ public class AgentManager {
         List<Integer> agentCoord = new LinkedList<>(Arrays.asList(x, y));
         if (placedAgentCoords.contains(agentCoord)) return numPlaced;
 
-        Agent agent = new Agent(x, y, incubationLen);
+        Agent agent = new Agent(x, y, incubationLen, sickTime, recovRate);
         agents.add(agent);
         placedAgentCoords.add(agentCoord);
         numPlaced++;
