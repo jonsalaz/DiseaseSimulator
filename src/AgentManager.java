@@ -4,6 +4,9 @@ import entities.Status;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class AgentManager {
 
@@ -24,7 +27,8 @@ public class AgentManager {
     public AgentManager(String configFile) {
         readConfig(configFile);
         buildSim();
-        printSim();
+        simLoop();
+        //printSim();
     }
 
     private void readConfig(String configFile) {
@@ -169,7 +173,24 @@ public class AgentManager {
         }
     }
 
-    private void simLoop() {}
+    private void simLoop() {
+        int deadOrImmune = initImm;
+        ExecutorService executorService = Executors.newFixedThreadPool(numAgents);
+
+        while(deadOrImmune < numAgents) {
+            for(Agent a : agents) {
+                a.setNeighborStatuses(findNeighborsStatus(a));
+                executorService.submit(a);
+            }
+            executorService.shutdown();
+
+            try {
+                executorService.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /** Utility function for placement of random/randomGrid agents -
      * Try to place agent randomly by checking generated coordinate against
