@@ -1,8 +1,7 @@
 import entities.Agent;
 import entities.Status;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,6 +12,11 @@ public class AgentManager {
     /** Initialized with default values, overridden by specified config */
     private ArrayList<Agent> agents;
     private HashMap<Agent, List<Agent>> agentNeighbors;
+    /** Holds the last status held by agent, if status changed during sim
+     * (i.e. agent dies), we update the log */
+    private HashMap<Agent, Status> loggedAgentStatus;
+    private File file;
+    private int daysPassed = 0;
     private int distance = 20;
     private int incubationLen = 5;
     private int sickTime = 10;
@@ -95,6 +99,7 @@ public class AgentManager {
 
     private void buildSim() {
         agents = new ArrayList<>();
+        initLog();
 
         //Initialize agents with locations based on simulation type.
         switch (agentLoc) {
@@ -187,16 +192,61 @@ public class AgentManager {
                 }
                 a.setNeighborStatuses(findNeighborsStatus(a));
                 executorService.submit(a);
+                logAgent(a);
             }
+            daysPassed++;
             deadOrImmune = counter;
 
-            System.out.println(deadOrImmune);
+            //System.out.println(deadOrImmune);
             executorService.shutdown();
             try {
                 executorService.awaitTermination(5, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void logAgent(Agent a) {
+
+        if (!loggedAgentStatus.containsKey(a)) {
+            loggedAgentStatus.put(a, a.getStatus());
+        }
+        else if (a.getStatus() != loggedAgentStatus.get(a)) {
+            loggedAgentStatus.put(a, a.getStatus());
+
+            System.out.println("Agent at [" + a.getCoord()[0]
+                    + ", " + a.getCoord()[1] + "] became "
+                    + a.getStatus() + " on day " + daysPassed);
+
+            try {
+                BufferedWriter bw =
+                        new BufferedWriter(new FileWriter(file, true));
+                bw.write("Agent at ["
+                        + a.getCoord()[0]
+                        + ", " + a.getCoord()[1] + "] became "
+                        + a.getStatus() + " on day " + daysPassed);
+                bw.newLine();
+                bw.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void initLog() {
+        loggedAgentStatus = new HashMap<>();
+        file = new File("resources/log.txt");
+        try {
+            file.createNewFile();
+            // Overwrite existing log file if exists
+            FileWriter fw = new FileWriter(file, false);
+            fw.write("");
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

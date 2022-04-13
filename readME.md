@@ -16,3 +16,7 @@ for ease of updating. Parameters are in the following order:
  9. Initial agent location
  10. Initial sick
  11. Initial immune
+
+### Implemented features
+    - Initial immune agents to config
+    - Agent logging
