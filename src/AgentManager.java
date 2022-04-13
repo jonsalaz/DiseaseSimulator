@@ -4,6 +4,9 @@ import entities.Status;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class AgentManager {
 
@@ -24,7 +27,9 @@ public class AgentManager {
     public AgentManager(String configFile) {
         readConfig(configFile);
         buildSim();
-        printSim();
+        simLoop();
+        System.exit(1);
+        //printSim();
     }
 
     private void readConfig(String configFile) {
@@ -98,7 +103,7 @@ public class AgentManager {
                     if (r >= gridR) break;
                     for (int c = 0; c < gridC * distance; c += distance) {
                         if (c >= gridC) break;
-                        Agent agent = new Agent(r, c);
+                        Agent agent = new Agent(r, c, incubationLen, sickTime, recovRate);
                         agents.add(agent);
                     }
                 }
@@ -169,7 +174,31 @@ public class AgentManager {
         }
     }
 
-    private void simLoop() {}
+    private void simLoop() {
+        int deadOrImmune = initImm;
+
+        while(deadOrImmune < numAgents) {
+            ExecutorService executorService = Executors.newFixedThreadPool(numAgents);
+
+            int counter = 0;
+            for(Agent a : agents) {
+                if(a.getStatus() == Status.DEAD || a.getStatus() == Status.IMMUNE) {
+                    counter++;
+                }
+                a.setNeighborStatuses(findNeighborsStatus(a));
+                executorService.submit(a);
+            }
+            deadOrImmune = counter;
+
+            System.out.println(deadOrImmune);
+            executorService.shutdown();
+            try {
+                executorService.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /** Utility function for placement of random/randomGrid agents -
      * Try to place agent randomly by checking generated coordinate against
@@ -178,7 +207,7 @@ public class AgentManager {
         List<Integer> agentCoord = new LinkedList<>(Arrays.asList(x, y));
         if (placedAgentCoords.contains(agentCoord)) return numPlaced;
 
-        Agent agent = new Agent(x, y);
+        Agent agent = new Agent(x, y, incubationLen, sickTime, recovRate);
         agents.add(agent);
         placedAgentCoords.add(agentCoord);
         numPlaced++;
