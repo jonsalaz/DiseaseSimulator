@@ -1,10 +1,13 @@
 import entities.Agent;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 
@@ -14,6 +17,15 @@ public class Display {
 
     public Display(Stage primaryStage) {
         this.primaryStage = primaryStage;
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                Platform.exit();
+                System.exit(1);
+            }
+        });
+
     }
 
     public void updateDisplay(ArrayList<Agent> agents, int width, int height){
@@ -39,5 +51,7 @@ public class Display {
 
         primaryStage.setScene(root);
         primaryStage.show();
-    };
+    }
+
+
 }
