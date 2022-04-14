@@ -36,7 +36,6 @@ public class AgentManager {
         this.display = display;
         buildSim();
         simLoop();
-        System.exit(1);
     }
 
     private void readConfig(String configFile) {
@@ -108,9 +107,7 @@ public class AgentManager {
         switch (agentLoc) {
             case ("grid"):
                 for (int r = 0; r < gridR * distance; r += distance) {
-                    if (r >= gridR) break;
                     for (int c = 0; c < gridC * distance; c += distance) {
-                        if (c >= gridC) break;
                         Agent agent = new Agent(r, c, incubationLen, sickTime, recovRate);
                         agents.add(agent);
                     }
@@ -209,7 +206,7 @@ public class AgentManager {
             }
             // Runs the updateDisplay function on the javafx application thread rather than the current thread of
             // the simulation.
-            Platform.runLater(() -> display.updateDisplay(agents, width, height));
+            Platform.runLater(() -> display.updateDisplay(agents, width, height, this));
         }
     }
 
@@ -289,4 +286,15 @@ public class AgentManager {
         }
     }
 
+    public String getFormation() {
+        return agentLoc;
+    }
+
+    public int getGridHeight(){
+        return this.gridR * this.distance;
+    }
+
+    public int getGridWidth(){
+        return this.gridC*this.distance;
+    }
 }
