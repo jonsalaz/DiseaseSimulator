@@ -30,8 +30,12 @@ public class AgentManager {
     private int initImm = 5;
 
     private Display display;
+    private Boolean shutdown;
+    private String configFile;
 
     public AgentManager(String configFile, Display display) {
+        this.configFile = configFile;
+        this.shutdown = false;
         readConfig(configFile);
         this.display = display;
         buildSim();
@@ -182,7 +186,7 @@ public class AgentManager {
     private void simLoop() {
         int deadOrImmune = initImm;
 
-        while(deadOrImmune < numAgents) {
+        while(deadOrImmune < numAgents && !shutdown) {
             ExecutorService executorService = Executors.newFixedThreadPool(numAgents);
 
             int counter = 0;
@@ -296,5 +300,18 @@ public class AgentManager {
 
     public int getGridWidth(){
         return this.gridC*this.distance;
+    }
+
+    public String getFileName() {
+        return configFile;
+    }
+
+
+    public Display getDisplay() {
+        return display;
+    }
+
+    public void shutdown() {
+        this.shutdown = true;
     }
 }
