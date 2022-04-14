@@ -1,4 +1,20 @@
+import com.sun.tools.javac.Main;
+import entities.Agent;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class Display {
 
@@ -6,5 +22,73 @@ public class Display {
 
     public Display(Stage primaryStage) {
         this.primaryStage = primaryStage;
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                Platform.exit();
+                System.exit(1);
+            }
+        });
+
     }
+
+    public void updateDisplay(ArrayList<Agent> agents, int width, int height, AgentManager manager){
+        primaryStage.setWidth(width+100);
+        primaryStage.setHeight(height+100);
+
+        Rectangle rectangle = new Rectangle(width, height, Color.WHITE);
+        rectangle.setStroke(Color.BLACK);
+        rectangle.setStrokeWidth(1);
+        rectangle.setX(25);
+        rectangle.setY(25);
+
+        Button button = new Button("Restart");
+        button.setTranslateX((float) width/2 - button.getWidth());
+        button.setTranslateY(height + 30);
+
+        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                //TODO: Handle restarting the program.
+                new Thread(() -> {
+                    AgentManager newMan = new AgentManager(manager.getFileName(), manager.getDisplay());
+                }).start();
+                manager.shutdown();
+            }
+        });
+
+        AnchorPane anchorPane = new AnchorPane(rectangle, button);
+        anchorPane.setPrefSize(width+100, height+100);
+
+        for (Agent agent: agents) {
+            Circle agentDot = agent.toDisplay();
+
+            if(Objects.equals(manager.getFormation(), "random")) {
+                agentDot.setCenterX(rectangle.getX() + agent.getCoord()[0]);
+                agentDot.setCenterY(rectangle.getY() + agent.getCoord()[1]);
+            }
+            else {
+                int gridHeight = manager.getGridHeight();
+                int gridWidth = manager.getGridWidth();
+
+                agentDot.setCenterX(rectangle.getX()
+                        + (agent.getCoord()[0] * ((float) height / (float) gridHeight)) + rectangle.getStrokeWidth());
+                agentDot.setCenterY(rectangle.getY()
+                        + (agent.getCoord()[1] * ((float)  width / (float) gridWidth)) + rectangle.getStrokeWidth());
+            }
+            // Scales agent display size dependent on the minimum between width and height of the simulation area.
+            agentDot.setRadius(Math.min(width, height)/Math.sqrt(agents.size())/2);
+
+            anchorPane.getChildren().add(agentDot);
+        }
+
+
+        Scene root = new Scene(anchorPane);
+
+        primaryStage.setScene(root);
+        primaryStage.show();
+    }
+
+
 }

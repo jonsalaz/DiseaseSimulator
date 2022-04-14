@@ -1,5 +1,6 @@
 import entities.Agent;
 import entities.Status;
+import javafx.application.Platform;
 
 import java.io.*;
 import java.util.*;
@@ -28,12 +29,17 @@ public class AgentManager {
     private int initSick = 1;
     private int initImm = 5;
 
-    public AgentManager(String configFile) {
+    private Display display;
+    private Boolean shutdown;
+    private String configFile;
+
+    public AgentManager(String configFile, Display display) {
+        this.configFile = configFile;
+        this.shutdown = false;
         readConfig(configFile);
+        this.display = display;
         buildSim();
         simLoop();
-        System.exit(1);
-        //printSim();
     }
 
     private void readConfig(String configFile) {
@@ -105,9 +111,7 @@ public class AgentManager {
         switch (agentLoc) {
             case ("grid"):
                 for (int r = 0; r < gridR * distance; r += distance) {
-                    if (r >= gridR) break;
                     for (int c = 0; c < gridC * distance; c += distance) {
-                        if (c >= gridC) break;
                         Agent agent = new Agent(r, c, incubationLen, sickTime, recovRate);
                         agents.add(agent);
                     }
@@ -182,7 +186,7 @@ public class AgentManager {
     private void simLoop() {
         int deadOrImmune = initImm;
 
-        while(deadOrImmune < numAgents) {
+        while(deadOrImmune < numAgents && !shutdown) {
             ExecutorService executorService = Executors.newFixedThreadPool(numAgents);
 
             int counter = 0;
@@ -204,6 +208,9 @@ public class AgentManager {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            // Runs the updateDisplay function on the javafx application thread rather than the current thread of
+            // the simulation.
+            Platform.runLater(() -> display.updateDisplay(agents, width, height, this));
         }
     }
 
@@ -283,4 +290,28 @@ public class AgentManager {
         }
     }
 
+    public String getFormation() {
+        return agentLoc;
+    }
+
+    public int getGridHeight(){
+        return this.gridR * this.distance;
+    }
+
+    public int getGridWidth(){
+        return this.gridC*this.distance;
+    }
+
+    public String getFileName() {
+        return configFile;
+    }
+
+
+    public Display getDisplay() {
+        return display;
+    }
+
+    public void shutdown() {
+        this.shutdown = true;
+    }
 }
