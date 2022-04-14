@@ -1,6 +1,9 @@
 package entities;
 
 
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -79,6 +82,27 @@ public class Agent implements Runnable {
     public double distanceTo(Agent a) {
         return Math.sqrt(Math.pow((this.x - a.x), 2)
                 + Math.pow((this.y - a.y), 2));
+    }
+
+    public Circle toDisplay() {
+        Circle circle = new Circle();
+        switch (this.status) {
+            case IMMUNE:
+                circle.setFill(Color.GREEN);
+                break;
+            case SICK:
+                circle.setFill(Color.YELLOW);
+                break;
+            case DEAD:
+                circle.setFill(Color.RED);
+                break;
+            case VULNERABLE:
+                circle.setFill(Color.GREY);
+                break;
+            default:
+                break;
+        }
+        return circle;
     }
 
     @Override
