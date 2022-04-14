@@ -33,7 +33,7 @@ public class Display {
 
     }
 
-    public void updateDisplay(ArrayList<Agent> agents, int width, int height, AgentManager manager, Thread thread){
+    public void updateDisplay(ArrayList<Agent> agents, int width, int height, AgentManager manager){
         primaryStage.setWidth(width+100);
         primaryStage.setHeight(height+100);
 
