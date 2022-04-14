@@ -1,7 +1,11 @@
+import com.sun.tools.javac.Main;
 import entities.Agent;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -29,7 +33,7 @@ public class Display {
 
     }
 
-    public void updateDisplay(ArrayList<Agent> agents, int width, int height, AgentManager manager){
+    public void updateDisplay(ArrayList<Agent> agents, int width, int height, AgentManager manager, Thread thread){
         primaryStage.setWidth(width+100);
         primaryStage.setHeight(height+100);
 
@@ -39,7 +43,18 @@ public class Display {
         rectangle.setX(25);
         rectangle.setY(25);
 
-        AnchorPane anchorPane = new AnchorPane(rectangle);
+        Button button = new Button("Restart");
+        button.setTranslateX((float) width/2 - button.getWidth());
+        button.setTranslateY(height + 30);
+
+        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                //TODO: Handle restarting the program.
+            }
+        });
+
+        AnchorPane anchorPane = new AnchorPane(rectangle, button);
         anchorPane.setPrefSize(width+100, height+100);
 
         for (Agent agent: agents) {
