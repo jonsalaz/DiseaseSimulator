@@ -51,6 +51,10 @@ public class Display {
             @Override
             public void handle(MouseEvent event) {
                 //TODO: Handle restarting the program.
+                new Thread(() -> {
+                    AgentManager newMan = new AgentManager(manager.getFileName(), manager.getDisplay());
+                }).start();
+                manager.shutdown();
             }
         });
 
@@ -69,9 +73,9 @@ public class Display {
                 int gridWidth = manager.getGridWidth();
 
                 agentDot.setCenterX(rectangle.getX()
-                        + (agent.getCoord()[0] * ((float)  width / (float) gridWidth)) + rectangle.getStrokeWidth());
+                        + (agent.getCoord()[0] * ((float) height / (float) gridHeight)) + rectangle.getStrokeWidth());
                 agentDot.setCenterY(rectangle.getY()
-                        + (agent.getCoord()[1] * ((float) height / (float) gridHeight)) + rectangle.getStrokeWidth());
+                        + (agent.getCoord()[1] * ((float)  width / (float) gridWidth)) + rectangle.getStrokeWidth());
             }
             // Scales agent display size dependent on the minimum between width and height of the simulation area.
             agentDot.setRadius(Math.min(width, height)/Math.sqrt(agents.size())/2);
