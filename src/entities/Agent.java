@@ -86,6 +86,7 @@ public class Agent implements Runnable {
 
     public Circle toDisplay() {
         Circle circle = new Circle();
+        circle.setRadius(1);
         switch (this.status) {
             case IMMUNE:
                 circle.setFill(Color.GREEN);
