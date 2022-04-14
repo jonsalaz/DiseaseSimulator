@@ -1,5 +1,6 @@
 import entities.Agent;
 import entities.Status;
+import javafx.application.Platform;
 
 import java.io.*;
 import java.util.*;
@@ -28,12 +29,14 @@ public class AgentManager {
     private int initSick = 1;
     private int initImm = 5;
 
-    public AgentManager(String configFile) {
+    private Display display;
+
+    public AgentManager(String configFile, Display display) {
         readConfig(configFile);
+        this.display = display;
         buildSim();
         simLoop();
         System.exit(1);
-        //printSim();
     }
 
     private void readConfig(String configFile) {
@@ -204,6 +207,9 @@ public class AgentManager {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            // Runs the updateDisplay function on the javafx application thread rather than the current thread of
+            // the simulation.
+            Platform.runLater(() -> display.updateDisplay(agents, width, height));
         }
     }
 
