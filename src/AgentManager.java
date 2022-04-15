@@ -38,6 +38,7 @@ public class AgentManager {
         this.shutdown = false;
         readConfig(configFile);
         this.display = display;
+        Platform.runLater(() -> display.setManager(this));
         buildSim();
         simLoop();
     }
@@ -306,6 +307,9 @@ public class AgentManager {
         return configFile;
     }
 
+    public int getHeight() { return this.height; }
+
+    public int getWidth() { return this.width; }
 
     public Display getDisplay() {
         return display;
