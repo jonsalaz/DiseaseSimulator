@@ -1,0 +1,8 @@
+dimensions 200 200
+exposuredistance 10
+incubation 5
+sickness 10
+recover 95
+randomGrid 50 50 1000
+initialsick 12
+immune 35

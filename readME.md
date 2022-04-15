@@ -2,7 +2,9 @@
 ## Authors: Jonathan Salazar and Cyrus McCormick
 
 ### Configuration file
- Configuration file name is provided via CLA. 
+Configuration file name is provided via CLA. 
+**Prebuilt configuration files include:
+gridConfig, randomConfig, ranGridConfig**.
 Parameters are labeled in the first column of config file 
 for ease of updating. Parameters are in the following order:
  1. Dimensions (r, c)
