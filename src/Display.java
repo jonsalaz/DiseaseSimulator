@@ -75,13 +75,14 @@ public class Display {
         primaryStage.setHeight(manager.getHeight()+100);
 
         this.simArea = new AnchorPane();
-        simArea.setStyle("-fx-border-width: 1px 1px 1px 1px; -fx-border-color: black");
+        simArea.setStyle("-fx-border-width: 1px 1px 1px 1px");
         simArea.setPrefSize(manager.getWidth(), manager.getHeight());
         simArea.setMaxSize(manager.getWidth(), manager.getHeight());
 
         this.vBox = new VBox(simArea, button);
         vBox.setPrefSize(manager.getWidth()+100, manager.getHeight()+100);
         vBox.setMaxSize(manager.getWidth()+100, manager.getHeight()+100);
+        vBox.setAlignment(Pos.CENTER);
 
         button.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
