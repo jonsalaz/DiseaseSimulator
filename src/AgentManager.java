@@ -1,3 +1,7 @@
+/** Jonathan Salazar, Cyrus McCormick
+ * AgentMananger: Responsible for reading simulation configuration properties,
+ * building, and executing disease simulations through managing agent threads. */
+
 import entities.Agent;
 import entities.Status;
 import javafx.application.Platform;
@@ -33,6 +37,8 @@ public class AgentManager {
     private Boolean shutdown;
     private String configFile;
 
+
+    /** Constructor receives file configuration name from CLA */
     public AgentManager(String configFile, Display display) {
         this.configFile = configFile;
         this.shutdown = false;
@@ -43,6 +49,8 @@ public class AgentManager {
         simLoop();
     }
 
+    /** Given config file name, read lines of config file & initialize
+     *  simulation parameters */
     private void readConfig(String configFile) {
 
         try {
@@ -104,6 +112,9 @@ public class AgentManager {
         }
     }
 
+    /** Construct simulation agents & agent neighbors using specified
+     *  simulation parameters. Check for initial agent location cases,
+     * & assign agent positions accordingly. Assign initial immune/sick */
     private void buildSim() {
         agents = new ArrayList<>();
         initLog();
@@ -169,6 +180,7 @@ public class AgentManager {
         findAgentNeighbors();
     }
 
+    /** Find neighbors within exposure distance for e/a agent */
     private void findAgentNeighbors() {
         if (numAgents <= 0) return;
         agentNeighbors = new HashMap<>();
@@ -184,6 +196,9 @@ public class AgentManager {
         }
     }
 
+    /** Main simulation logic, continue running simulation while
+     * reachable vulnerable agents exist. Retrieve e/a agent and update
+     * neighbor statuses, add to thread pool, update log and display.*/
     private void simLoop() {
         int deadOrImmune = initImm;
 
@@ -215,6 +230,8 @@ public class AgentManager {
         }
     }
 
+    /** Provided agent, check whether agent status has been updated since last
+     * simulation iteration, if so, update agent's status in log. */
     private void logAgent(Agent a) {
 
         if (!loggedAgentStatus.containsKey(a)) {
@@ -222,10 +239,6 @@ public class AgentManager {
         }
         else if (a.getStatus() != loggedAgentStatus.get(a)) {
             loggedAgentStatus.put(a, a.getStatus());
-
-            System.out.println("Agent at [" + a.getCoord()[0]
-                    + ", " + a.getCoord()[1] + "] became "
-                    + a.getStatus() + " on day " + daysPassed);
 
             try {
                 BufferedWriter bw =
@@ -244,6 +257,7 @@ public class AgentManager {
 
     }
 
+    /** Create text file to house agent logging information. */
     private void initLog() {
         loggedAgentStatus = new HashMap<>();
         file = new File("resources/log.txt");
@@ -272,6 +286,7 @@ public class AgentManager {
         return numPlaced;
     }
 
+    /** Provided agent, retrieve list of other agents within exposure distance */
     private List<Status> findNeighborsStatus(Agent agent){
         List<Status> neighborsStatus = new ArrayList<>();
         List<Agent> neighbors = agentNeighbors.get(agent);
@@ -282,8 +297,9 @@ public class AgentManager {
         return neighborsStatus;
     }
 
-    private void printSim() {
 
+    /** Print simulation information, testing function */
+    private void printSim() {
         System.out.println(agentNeighbors.size() + " agents");
         for (Map.Entry<Agent, List<Agent>> entry : agentNeighbors.entrySet()) {
             System.out.println(entry.getKey().toString() +
@@ -291,30 +307,40 @@ public class AgentManager {
         }
     }
 
+    /** Retrieve initial agent location case */
     public String getFormation() {
         return agentLoc;
     }
 
+    /** Retrieve height of grid in case of grid/randomGrid
+     *  initial agent location case */
     public int getGridHeight(){
         return this.gridR * this.distance;
     }
 
+    /** Retrieve width of grid in case of grid/randomGrid
+     *  initial agent location case */
     public int getGridWidth(){
         return this.gridC*this.distance;
     }
 
+    /** Retrieve name of configuration file */
     public String getFileName() {
         return configFile;
     }
 
+    /** Retrieve config dimension height */
     public int getHeight() { return this.height; }
 
+    /** Retrieve config dimension width */
     public int getWidth() { return this.width; }
 
+    /** Retrieve display instance */
     public Display getDisplay() {
         return display;
     }
 
+    /** Update simulation shutdown flag */
     public void shutdown() {
         this.shutdown = true;
     }

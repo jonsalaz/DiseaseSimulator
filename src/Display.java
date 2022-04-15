@@ -1,16 +1,16 @@
+/** Jonathan Salazar, Cyrus McCormick
+ * Display: Initialize visualization of disease simulation & event listeners for simulation
+ * resets */
+
 import entities.Agent;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -25,16 +25,17 @@ public class Display {
     public Display(Stage primaryStage) {
         this.primaryStage = primaryStage;
 
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                Platform.exit();
-                System.exit(1);
-            }
+        primaryStage.setOnCloseRequest(event -> {
+            Platform.exit();
+            System.exit(1);
         });
 
     }
 
+    /** Called for e/a iteration of simulation loop (e/a day),
+     * Provided list of agents, dimension properties, reference to agent manager.
+     * Populate simulation area element with agent dots scaled depending on total number
+     * of agents */
     public void updateDisplay(ArrayList<Agent> agents, int width, int height, AgentManager manager){
         this.simArea.getChildren().clear();
 
@@ -63,12 +64,14 @@ public class Display {
         primaryStage.show();
     }
 
+    /** Set AgentManager, used during initial simulation before restarts */
     public void setManager(AgentManager manager) {
         this.manager = manager;
-        initializeActionEvents();
+        initializeDisplay();
     }
 
-    private void initializeActionEvents() {
+    /** Initialize display objects which are not dependent on retrieving agents  */
+    private void initializeDisplay() {
         Button button = new Button("Restart");
 
         primaryStage.setWidth(manager.getWidth()+100);
@@ -84,14 +87,15 @@ public class Display {
         vBox.setMaxSize(manager.getWidth()+100, manager.getHeight()+100);
         vBox.setAlignment(Pos.CENTER);
 
-        button.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                new Thread(() -> {
-                    AgentManager newMan = new AgentManager(manager.getFileName(), manager.getDisplay());
-                }).start();
-                manager.shutdown();
-            }
+        button.setStyle("-fx-border-radius: 500px; -fx-background-color: black;" +
+                " -fx-text-fill: white; -fx-padding: 20px; -fx-border-insets: 5px; " +
+                "-fx-background-insets: 10px; -fx-font-weight: bold");
+
+        button.setOnMousePressed(event -> {
+            new Thread(() -> {
+                new AgentManager(manager.getFileName(), manager.getDisplay());
+            }).start();
+            manager.shutdown();
         });
         this.root = new Scene(vBox);
         primaryStage.setScene(root);

@@ -1,13 +1,17 @@
-package entities;
+/** Jonathan Salazar, Cyrus McCormick
+ * Agent: Entity which represents disease vector for simulation.
+ * Implements runnable, tasked with iterating neighbor statuses
+ * and deciding whether own status should be updated,
+ * and when status is updated, begin infection/sickness timer if applicable
+ * */
 
+package entities;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.BlockingQueue;
 
 // Each agent should be responsible for finding its neighbors
 public class Agent implements Runnable {
@@ -30,6 +34,9 @@ public class Agent implements Runnable {
         coord = new Integer[]{x, y};
     }
 
+    /** When thread task is executed, update agent status if necessary, if agent currently
+     * infected update incubation period, if currently sick update remaining sickness duration,
+     * if sickness ends, decide whether agent has survived or died. */
     @Override
     public void run() {
         if(this.status == Status.DEAD || this.status == Status.IMMUNE) {
@@ -63,27 +70,34 @@ public class Agent implements Runnable {
 
     }
 
+    /** Retrieve agent's current status */
     public Status getStatus() {
         return status;
     }
 
+    /** Update agent's current status */
     public void setStatus(Status status) {
         this.status = status;
     }
 
+    /** Update agent's neighbor statuses list */
     public void setNeighborStatuses(List<Status> neighborStatuses) {
         this.neighborStatuses = neighborStatuses;
     }
 
+    /** Retrieve agent's position coordinate */
     public Integer[] getCoord() {
         return coord;
     }
 
+    /** Provided agent, check distance to this agent */
     public double distanceTo(Agent a) {
         return Math.sqrt(Math.pow((this.x - a.x), 2)
                 + Math.pow((this.y - a.y), 2));
     }
 
+    /** Initialize agent dot for display w/ color
+     * appropriate to agent's current status */
     public Circle toDisplay() {
         Circle circle = new Circle();
         circle.setRadius(1);

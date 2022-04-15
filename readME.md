@@ -20,3 +20,4 @@ for ease of updating. Parameters are in the following order:
 ### Implemented features
     - Initial immune agents to config
     - Agent logging
+    - Restart simulation from client

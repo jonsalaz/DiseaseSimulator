@@ -1,3 +1,6 @@
+/** Jonathan Salazar, Cyrus McCormick
+ * DiseaseSimApplication: Main method for JavaFX application */
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -8,12 +11,13 @@ public class DiseaseSimApplication extends Application {
         launch(args);
     }
 
+    /** Initialize display & agent manager  */
     @Override
     public void start(Stage primaryStage) throws Exception {
         Display display = new Display(primaryStage);
 
         new Thread(() -> {
-            AgentManager manager = new AgentManager(fileName, display);
+            new AgentManager(fileName, display);
         }).start();
     }
 }
