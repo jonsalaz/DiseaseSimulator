@@ -41,6 +41,10 @@ In the case of missing parameters the defaults are as follows:
     - Agent logging
     - Restart simulation from client
 
+### Agent Logging
+Disease Simulation creates a log.txt containing information on all updates made to agents, whether that be becoming
+sick, immune, or dying. 
+
 ### Known Bugs
 
  - No known bugs or issues. 
