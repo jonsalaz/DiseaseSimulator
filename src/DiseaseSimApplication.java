@@ -13,7 +13,7 @@ public class DiseaseSimApplication extends Application {
 
     /** Initialize display & agent manager  */
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         Display display = new Display(primaryStage);
 
         new Thread(() -> {

@@ -37,7 +37,6 @@ public class AgentManager {
     private Boolean shutdown;
     private String configFile;
 
-
     /** Constructor receives file configuration name from CLA */
     public AgentManager(String configFile, Display display) {
         this.configFile = configFile;
@@ -55,7 +54,7 @@ public class AgentManager {
 
         try {
             BufferedReader br = new BufferedReader(
-                    new FileReader("resources/" + configFile));
+                    new FileReader(configFile));
 
             String line = br.readLine();
             while (line != null) {
@@ -217,7 +216,6 @@ public class AgentManager {
             daysPassed++;
             deadOrImmune = counter;
 
-            //System.out.println(deadOrImmune);
             executorService.shutdown();
             try {
                 executorService.awaitTermination(5, TimeUnit.SECONDS);
@@ -260,7 +258,7 @@ public class AgentManager {
     /** Create text file to house agent logging information. */
     private void initLog() {
         loggedAgentStatus = new HashMap<>();
-        file = new File("resources/log.txt");
+        file = new File("log.txt");
         try {
             file.createNewFile();
             // Overwrite existing log file if exists
